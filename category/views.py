@@ -1,8 +1,6 @@
-from dataclasses import fields
-
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from category.forms import CategoryForm
 from category.models import Category
@@ -26,6 +24,13 @@ class CategoryListView(CreateView, ListView):
     def post(self, request, *args, **kwargs):
         return CategoryCreateView.as_view()(request)
 
+    def get_queryset(self, *args, **kwargs):
+        if self.kwargs:
+            return Category.objects.filter(category=self.kwargs['category']).order_by('-createdAt')
+        else:
+            query = Category.objects.all().order_by('-createdAt')
+            return query
+
 
 class CategoryCreateView(CreateView):
     model = Category
@@ -33,4 +38,27 @@ class CategoryCreateView(CreateView):
     template_name = 'category/category_create.html'
     success_url = reverse_lazy('category-list')
 
-    
+
+class CategoryDeleteView(DeleteView):
+    model = Category
+    template_name = ".html"
+
+
+class CategoryUpdateView(UpdateView, ListView):
+    model = Category
+    # fields = ['name']
+    paginate_by = 5
+    form_class = CategoryForm
+    queryset = Category.objects.all().order_by('name')
+    template_name = 'category/category_list.html'
+    success_url = reverse_lazy('category-list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    # If form post redirect to ModelCreate View
+    #def post(self, request, *args, **kwargs):
+    #    return CategoryUpdateView.as_view()(request)
+
