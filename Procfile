@@ -1,0 +1,1 @@
+web: gunicorn gedico.wsgi --log-file -
