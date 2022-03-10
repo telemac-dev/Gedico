@@ -109,13 +109,16 @@
                         </div>
                     </li>
                     <li>
-                        <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        <a href="{% url 'paz' %}" class="active"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="#">Second Level Item</a>
+                                <a href="{% url 'category-list' %}#">Categorias</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'category-list' %}#">SubCategorias</a>
                             </li>
                             <li>
                                 <a href="#">Third Level <span class="fa arrow"></span></a>
@@ -136,7 +139,6 @@
     <!-- Page Content -->
     <div id="page-wrapper">
         <div class="container-fluid">
-
 
             {% block content %}
             <!-- ... Your content goes here ... -->
