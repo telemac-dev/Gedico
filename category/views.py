@@ -9,11 +9,20 @@ from category.models import Category
 # Create your views here.
 class CategoryListView(CreateView, ListView):
     model = Category
-    # fields = ['name']
-    paginate_by = 5
+    paginate_by = 3
     form_class = CategoryForm
-    queryset = Category.objects.all().order_by('name')
     template_name = 'category/category_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filter_name = self.request.GET.get('name') or None
+        
+        if filter_name:
+            queryset = queryset.filter(name__contains=filter_name)
+        else:
+            queryset = Category.objects.all().order_by('name')
+        return queryset
+    
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -23,13 +32,6 @@ class CategoryListView(CreateView, ListView):
     # If form post redirect to ModelCreate View
     def post(self, request, *args, **kwargs):
         return CategoryCreateView.as_view()(request)
-
-    def get_queryset(self, *args, **kwargs):
-        if self.kwargs:
-            return Category.objects.filter(category=self.kwargs['category']).order_by('-createdAt')
-        else:
-            query = Category.objects.all().order_by('-createdAt')
-            return query
 
 
 class CategoryCreateView(CreateView):
@@ -46,8 +48,7 @@ class CategoryDeleteView(DeleteView):
 
 class CategoryUpdateView(UpdateView, ListView):
     model = Category
-    # fields = ['name']
-    paginate_by = 5
+    paginate_by = 3
     form_class = CategoryForm
     queryset = Category.objects.all().order_by('name')
     template_name = 'category/category_list.html'
